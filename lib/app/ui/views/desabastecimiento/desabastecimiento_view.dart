@@ -8,6 +8,7 @@ import 'package:appsivalmattel/core/theme/app_text_style.dart';
 import 'package:appsivalmattel/core/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:location/location.dart';
 
 import '../../../data/models/response/response_distribuidora_model.dart';
 import '../../../data/models/response/response_puntoventa_model.dart';
@@ -50,24 +51,18 @@ class _DesabastecimientoViewState extends State<DesabastecimientoView> {
   String p07 = "";
   List lp = List.generate(11, (i) => i * 10);
 
-  File? imageFile1;
-  File? imageFile11;
-  File? imageFile2;
-  File? imageFile21;
-  File? imageFile3;
-  File? imageFile31;
-  File? imageFile4;
-  File? imageFile41;
-  File? imageFile5;
-  File? imageFile51;
-  File? imageFile6;
-  File? imageFile61;
-  File? imageFile7;
-  File? imageFile71;
-
   TextEditingController fechaController = TextEditingController();
+
+  //Localización
+  Location location = Location();
+
+  bool _serviceEnabled = false;
+  late PermissionStatus _permissionGranted;
+  late LocationData _locationData;
+
   @override
   void initState() {
+    _checkLocationPermission();
     getAllSqlite();
     super.initState();
   }
@@ -75,6 +70,31 @@ class _DesabastecimientoViewState extends State<DesabastecimientoView> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  //Location
+  Future<void> _checkLocationPermission() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    //Obtener latitud y longitud
+    /*  location.onLocationChanged.listen((LocationData currentLocation) {
+      _locationData = currentLocation;
+    }); */
+    _locationData = await location.getLocation();
   }
 
   getAllSqlite() async {
@@ -108,21 +128,6 @@ class _DesabastecimientoViewState extends State<DesabastecimientoView> {
 
     setState(() {});
   }
-
-/*   void _showDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2024),
-    ).then(
-      (value) {
-        setState(() {
-          fecha = value!;
-        });
-      },
-    );
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -310,27 +315,23 @@ class _DesabastecimientoViewState extends State<DesabastecimientoView> {
               BtnPrimary(
                 text: "Guardar",
                 onPressed: () {
-                  controller.doSave(puntoventaid, puntoventa, fechaSupervision,
-                      p01, p02, p03, p04, p05, p06, p07, comentario);
+                  controller.doSave(
+                    puntoventaid,
+                    puntoventa,
+                    fechaSupervision,
+                    p01,
+                    p02,
+                    p03,
+                    p04,
+                    p05,
+                    p06,
+                    p07,
+                    comentario,
+                    _locationData.latitude.toString(),
+                    _locationData.longitude.toString(),
+                  );
                 },
               ),
-
-              /*  MaterialButton(
-                onPressed: controller.doSave,
-                //elevation: 10.0,
-                minWidth: 170.0,
-                height: 50.0,
-                color: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                child: const Text(
-                  "Guardar",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17.0,
-                  ),
-                ),
-              ), */
             ],
           ),
         );
@@ -407,88 +408,4 @@ class _DesabastecimientoViewState extends State<DesabastecimientoView> {
       },
     );
   }
-
-/*   _distribuidoras(BuildContext context, distribuidoras) {
-    showModalBottomSheet(
-      barrierColor: Colors.black12,
-      backgroundColor: Colors.blue.shade100,
-      isDismissible: true,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(35),
-        ),
-      ),
-      context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 400.0,
-          child: ListView.builder(
-            itemCount: distribuidoras.length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(distribuidoras[index].nombre),
-              onTap: () {
-                empresanombre = distribuidoras[index].nombre;
-                empresaid = distribuidoras[index].id.toString();
-                buscaempresaid = distribuidoras[index].id;
-                getPuntoVenta();
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-          ),
-        );
-      },
-    );
-  } */
-
-/*   _puntoventas(BuildContext context, puntoventas) {
-    showModalBottomSheet(
-      barrierColor: Colors.black12,
-      backgroundColor: Colors.blue.shade200,
-      isDismissible: true,
-      isScrollControlled: false,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(35),
-        ),
-      ),
-      context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 400.0,
-          child: ListView.builder(
-            itemCount: puntoventas.length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(puntoventas[index].nombre),
-              onTap: () {
-                puntoventa = puntoventas[index].nombre;
-                puntoventaid = puntoventas[index].id.toString();
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-          ),
-        );
-      },
-    );
-  } */
-
-/*                 Container(
-                width: 600,
-                height: 360,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  //image: DecorationImage(
-                  //  image: FileImage(imageFile!),
-                  //),
-                  border: Border.all(
-                    width: 8,
-                    color: Colors.black12,
-                  ),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-              ),
-*/
 }

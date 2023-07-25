@@ -31,6 +31,27 @@ class Helpers {
     return outputFormat.format(inputDate);
   }
 
+  /*  static String getCustomFormatedDate(
+    String? date, {
+    String locale = "es",
+    bool showTime = false,
+  }) {
+    if (date == null || date.isEmpty) return "-";
+
+  //20230713_155832
+
+    var inputFormat = locale == "es"
+        ? DateFormat('yyyyMMdd hh')
+        : DateFormat('dd/MM/yyyy hh:mm');
+    var inputDate = inputFormat.parse(date); // ?? DateTime.now().toString()
+    var outputFormat = locale == "es"
+        ? showTime == true
+            ? DateFormat('dd/MM/yyyy hh:mm')
+            : DateFormat('dd/MM/yyyy')
+        : DateFormat('yyyy-MM-dd hh:mm');
+    return outputFormat.format(inputDate);
+  }
+ */
   static Future<void> getShowModalBS(
     BuildContext context, {
     required Widget content,

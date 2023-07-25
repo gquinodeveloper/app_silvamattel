@@ -43,6 +43,7 @@ class UploadController extends GetxController {
           .toList();
       //2.- Guardar los registros en el servidor
       for (ResponseMatteldesabasteModel item in results) {
+        final supfecha = DateTime.parse(item.supfecha);
         // ignore: unused_local_variable
         await _provider.save(
           RequestMatteldesabasteModel(
@@ -72,9 +73,10 @@ class UploadController extends GetxController {
             f061: (item.f061 != "" ? item.f061.split('/').last : ""),
             f071: (item.f071 != "" ? item.f071.split('/').last : ""),
             comentario: item.comentario,
-            supfecha: item.supfecha,
-            suplatitud: "",
-            suplongitud: "",
+            supfecha:
+                "${supfecha.year.toString().padLeft(4, '0')}${supfecha.month.toString().padLeft(2, '0')}${supfecha.day.toString().padLeft(2, '0')}_${supfecha.hour.toString().padLeft(2, '0')}${supfecha.minute.toString().padLeft(2, '0')}${supfecha.second.toString().padLeft(2, '0')}",
+            suplatitud: item.suplatitud,
+            suplongitud: item.suplongitud,
           ),
         );
 

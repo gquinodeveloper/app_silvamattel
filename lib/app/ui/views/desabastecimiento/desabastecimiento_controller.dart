@@ -171,6 +171,8 @@ class DesabastecimientoController extends GetxController {
     String p06,
     String p07,
     String comentario,
+    String latitud,
+    String longitud,
   ) async {
     try {
       //1.- Armar el modelo
@@ -202,8 +204,8 @@ class DesabastecimientoController extends GetxController {
         f071: imageFileList7.length > 1 ? imageFileList7[1].path : "",
         comentario: comentario,
         supfecha: DateTime.now().toString(),
-        suplatitud: "",
-        suplongitud: "",
+        suplatitud: latitud,
+        suplongitud: longitud,
       );
 
       //2.- Guardar
