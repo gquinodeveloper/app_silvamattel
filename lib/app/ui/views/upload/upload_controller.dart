@@ -42,6 +42,7 @@ class UploadController extends GetxController {
           .map((data) => ResponseMatteldesabasteModel.fromJson(data))
           .toList();
       //2.- Guardar los registros en el servidor
+      Spinner.show();
       for (ResponseMatteldesabasteModel item in results) {
         final supfecha = DateTime.parse(item.supfecha);
         // ignore: unused_local_variable
@@ -121,6 +122,7 @@ class UploadController extends GetxController {
         await _provider.uploadFile(file);
         //4.- Eliminar datos de BD local para no procesar nuevamente
       }
+      Spinner.hide();
     } catch (error) {
       print("save error: $error");
     }

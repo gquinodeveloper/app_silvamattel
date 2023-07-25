@@ -31,7 +31,7 @@ class MatteldesabasteProvider {
 
   Future<String> uploadFile(Map<String, dynamic> file) async {
     final dio = Dio();
-
+    fromMapFile.clear();
     //PREGUNTA 1
     await addValueMap(
       key: "F01",
@@ -58,12 +58,14 @@ class MatteldesabasteProvider {
 
     //Definir imagen
     FormData formData = FormData.fromMap(fromMapFile);
-
     final response = await dio.post(
       'http://www.sivalaplicativos.com/matteldesabastesSubirImagen',
       data: formData,
+      options: Options(
+        contentType: 'multipart/form-data',
+        followRedirects: false,
+      ),
     );
-    formData.finalize(); // Por evalular
     return "";
   }
 }
